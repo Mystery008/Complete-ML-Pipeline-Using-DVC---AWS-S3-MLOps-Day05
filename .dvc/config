@@ -1,0 +1,6 @@
+[core]
+    site_cache_dir = C:\dvc_cache
+    hardlink_lock = false
+[cache]
+    type = copy
+    dir = C:\dvc_cache
