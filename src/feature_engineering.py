@@ -94,42 +94,20 @@ def save_data(df: pd.DataFrame, file_path: str) -> None:
 
 def main():
     try:
-        # Get project root directory dynamically
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.dirname(current_dir)
-
-        params_path = os.path.join(project_root, 'params.yaml')
-
-        params = load_params(params_path)
+        params = load_params(params_path='params.yaml')
         max_features = params['feature_engineering']['max_features']
+        # max_features = 50
 
-        train_path = os.path.join(project_root, 'data', 'interim', 'train_processed.csv')
-        test_path = os.path.join(project_root, 'data', 'interim', 'test_processed.csv')
+        train_data = load_data('./data/interim/train_processed.csv')
+        test_data = load_data('./data/interim/test_processed.csv')
 
-        train_data = load_data(train_path)
-        test_data = load_data(test_path)
+        train_df, test_df = apply_tfidf(train_data, test_data, max_features)
 
-        train_df, test_df = apply_tfidf(
-            train_data,
-            test_data,
-            max_features
-        )
-
-        save_data(
-            train_df,
-            os.path.join(project_root, 'data', 'processed', 'train_tfidf.csv')
-        )
-
-        save_data(
-            test_df,
-            os.path.join(project_root, 'data', 'processed', 'test_tfidf.csv')
-        )
-
+        save_data(train_df, os.path.join("./data", "processed", "train_tfidf.csv"))
+        save_data(test_df, os.path.join("./data", "processed", "test_tfidf.csv"))
     except Exception as e:
-        logger.error(
-            'Failed to complete the feature engineering process: %s',
-            e
-        )
+        logger.error('Failed to complete the feature engineering process: %s', e)
         print(f"Error: {e}")
+
 if __name__ == '__main__':
     main()
